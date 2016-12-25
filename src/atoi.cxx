@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
     std::cout << "length of input is: " << strlen(input) + 1 << std::endl;
     ulint res = do_atoi(input);
 
-    std::cout << "integer value is: " << res << std::endl;
+    std::cout << "value is: " << res << std::endl;
 
     return 0;
 }
