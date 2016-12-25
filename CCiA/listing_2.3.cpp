@@ -1,4 +1,6 @@
 #include <thread>
+#include <cmath>
+#include <iostream>
 
 class thread_guard
 {
@@ -34,6 +36,7 @@ struct func
         for(unsigned j=0;j<1000000;++j)
         {
             do_something(i);
+            // std::cout << "j: " << j << std::endl;
         }
     }
 };
@@ -55,4 +58,5 @@ void f()
 int main()
 {
     f();
+    std::cout << "all izz well" << std::endl;
 }

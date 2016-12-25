@@ -1,5 +1,6 @@
 #include <vector>
 #include <thread>
+#include <iostream>
 #include <algorithm>
 #include <functional>
 
@@ -12,6 +13,7 @@ void f()
     for(unsigned i=0;i<20;++i)
     {
         threads.push_back(std::thread(do_work,i));
+        std::cout << "i: " << i << std::endl;
     }
     std::for_each(threads.begin(),threads.end(),
         std::mem_fn(&std::thread::join));
