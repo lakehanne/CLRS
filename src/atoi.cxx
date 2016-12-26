@@ -21,19 +21,21 @@
 #include <cassert>
 #include <cstring>
   
- 
-int do_atoi(char *input)
+using ulint = unsigned long int;
+
+ulint do_atoi(char *input)
 {
-    unsigned temp = 0;
-    for(unsigned i= 0; input[i] != '\0'; ++i )
+    ulint temp = 0;
+    for(ulint i= 0; input[i] != '\0'; ++i )
     {
         temp = temp*10 + input[i]-'0'; 
+        std::cout << "i: "<< i << " | temp: " << temp << std::endl;
     }
     return temp;
 }
 
 // Driver program to test atoi function
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
     //note that char** is a pointer to an array of chars
 
@@ -42,9 +44,9 @@ int main(int argc, char** argv)
     char *input = argv[1];
     std::cout << "input is " << input << std::endl;
     std::cout << "length of input is: " << strlen(input) + 1 << std::endl;
-    int res = do_atoi(input);
+    ulint res = do_atoi(input);
 
-    std::cout << "integer value is: " << res << std::endl;
+    std::cout << "value is: " << res << std::endl;
 
     return 0;
 }
