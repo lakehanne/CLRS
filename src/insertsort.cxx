@@ -20,6 +20,7 @@
 #include <array>
 #include <typeinfo>
 #include <iostream>
+#include <algorithm>
 
 using std::cout;
 using std::endl;
@@ -64,5 +65,9 @@ int main()
 	for(auto cit=array.cbegin(); cit!=array.cend(); ++cit)
 		cout << *cit << " " ;
 	cout << "\n" << endl;
+
+	cout << "printed with for_each and lambda" << endl;
+	std::for_each(array.cbegin(),array.cend(),[](int i){std::cout<<i<<" ";});
+	std::cout << std::endl;
 
 }

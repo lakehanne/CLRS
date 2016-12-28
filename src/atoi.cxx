@@ -21,7 +21,7 @@
 #include <cassert>
 #include <cstring>
   
-using ulint = unsigned long int;
+using ulint = unsigned long long;
 
 ulint do_atoi(char *input)
 {
