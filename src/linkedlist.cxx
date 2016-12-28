@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 #include <iostream>
 #include <cassert>
 
@@ -12,12 +10,12 @@ template<typename T>
 class Link
 {
 public:
-	T element;		//value for the node
+	T value;		//value for the node
 	Link *next; 	//pointer to next node in the list
 
 	//constructors
-	Link(const T& elemval, Link* nextval= nullptr)
-	: element(elemval), next(nextval)
+	Link(const T& val, Link* nextval= nullptr)
+	: value(val), next(nextval)
 	{ }
 
 	Link(Link* nextval = nullptr)
@@ -32,8 +30,8 @@ class LList : public List <T>
 {
 private:
 	Link<T>* head;   //pointer to list header
-	Link<T>* tail;   //pointer to list's last element
-	Link<T>* curr;   //access to current element
+	Link<T>* tail;   //pointer to list's last value
+	Link<T>* curr;   //access to current value
 	int cnt;		//size of list
 
 	void init()
@@ -42,7 +40,7 @@ private:
 		cnt = 0;
 	}
 
-	void removeall()
+	void eraseall()
 	{
 		while(head != nullptr)
 		{
@@ -60,12 +58,12 @@ public:
 
 	~LList()
 	{
-		removeall();
+		eraseall();
 	}
 
 	void print()
 	{
-		std::cout << "current elements of the list: " << std::endl;
+		std::cout << "current values of the list: " << std::endl;
 		begin();   //set curr to beginning
 		for(unsigned i = 0; i <= cnt; ++i)
 		{			
@@ -79,11 +77,11 @@ public:
 
 	void clear() 	//clear all list contents
 	{ 
-		removeall(); 
+		eraseall(); 
 		init();
  	}
 
- 	/*Insert element at current position */
+ 	/*Insert value at current position */
  	void insert(const T& elem)
  	{
  		curr->next = new Link<T> (elem, curr->next);
@@ -100,13 +98,13 @@ public:
  		cnt++;
  	}
 
- 	//remove and return current element
+ 	//remove and return current value
  	T remove()
  	{
  		if(curr->next==nullptr)
- 			std::cout<< "no element to remove" << std::endl;
+ 			std::cout<< "no value to remove" << std::endl;
 
- 		T elem = curr->next->element;
+ 		T elem = curr->next->value;
  		Link<T>* ltemp = curr->next;		//remember link node
 
  		if(tail == curr->next)
@@ -170,7 +168,7 @@ public:
  	const T& getCurElem()
  	{
  		assert(curr->next != nullptr);
- 		return curr->next->element;
+ 		return curr->next->value;
  	}
 };
 
@@ -187,40 +185,9 @@ int main()
 	ll.print();
 
 	ll.clear();
-	// OUT_INFO("current element: " << ll.getCurElem());
+	// OUT_INFO("current value: " << ll.getCurElem());
 
 	// ll.print();
 
 	return 0;
-=======
-#include <iostream>
-#include <memory>
-
-struct node{
-	int x;
-	std::shared_ptr<node> next;
-};
-
-int main(void)
-{
-	std::shared_ptr<node> root(new node);
-	
-	root->next = 0;
-	root->x = 5;
-	std::shared_ptr<node> conductor(root);
-
-	if(conductor!=0)
-	{
-		while(conductor->next != 0)
-		{
-			std::cout << "conductor " << conductor->x << std::endl;
-			conductor = conductor->next;
-		}
-	}
-	conductor->next.reset(new node);
-	conductor = conductor->next;
-	conductor->next = 0;
-	conductor->x = 42;
-			std::cout << "conductor " << conductor->x << std::endl;
->>>>>>> 37ed7e71c752705a49d2f7d57b5e1c5a6f1e8302
 }

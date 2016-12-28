@@ -50,7 +50,7 @@ std::array<arrayType,param> insertsort(std::array<arrayType,param> nums)
 
 int main()
 {
-
+	//example
 	std::array<int, param> nums {31,41,59,26,41,58};
 	auto array = insertsort(nums);
 
