@@ -9,6 +9,8 @@
 template<typename T> 
 class Link
 {
+private:
+	static Link<T>* freelist; 		//ref to freelist head
 public:
 	T value;		//value for the node
 	Link *next; 	//pointer to next node in the list
@@ -22,6 +24,23 @@ public:
 	{
 		next = nextval;
 	}
+
+	// void* operator new(size_t)   //overload the new operator
+	// {
+	// 	if(freelist == nullptr)
+	// 		return ::new Link;   //create space
+
+	// 	Link<T>* temp = freelist;   //can take from a freelist
+	// 	freelist = freelist->next;
+	// 	return temp;
+	// }
+
+	// /*overload the delete operator*/
+	// void operator delete(void* ptr)
+	// {
+	// 	static_cast<Link<T>*>(ptr)->next = freelist; //put on freelist
+	// 	freelist = static_cast<Link<T>*>(ptr);
+	// }
 };
 
 //linked list implementation
@@ -32,12 +51,12 @@ private:
 	Link<T>* head;   //pointer to list header
 	Link<T>* tail;   //pointer to list's last value
 	Link<T>* curr;   //access to current value
-	int cnt;		//size of list
+	int iter;		//size of list
 
 	void init()
 	{
 		curr = tail = head = new Link<T>;
-		cnt = 0;
+		iter = 0;
 	}
 
 	void eraseall()
@@ -65,7 +84,7 @@ public:
 	{
 		std::cout << "current values of the list: " << std::endl;
 		begin();   //set curr to beginning
-		for(unsigned i = 0; i <= cnt; ++i)
+		for(unsigned i = 0; i <= iter; ++i)
 		{			
 			setPos(i);
 			T val = getCurElem();
@@ -88,14 +107,14 @@ public:
  		if(tail == curr)
  			tail = curr -> next; //new tail
 
- 		++cnt;
+ 		++iter;
  	}
 
  	void append(const T& elem)
  	{
  		tail->next = new Link<T>(elem, nullptr);
  		tail = tail->next;
- 		cnt++;
+ 		iter++;
  	}
 
  	//remove and return current value
@@ -110,7 +129,7 @@ public:
  		if(tail == curr->next)
  			tail == curr ;   				//remove from list
  		delete ltemp;
- 		cnt--;
+ 		iter--;
  		return elem;
 
  	}
@@ -144,7 +163,7 @@ public:
 
  	int size() const
  	{
- 		return cnt;
+ 		return iter;
  	}
 
  	int currPos() const
@@ -158,7 +177,7 @@ public:
 
  	void setPos(int pos)
  	{
- 		assert((pos>=0) && (pos<=cnt));
+ 		assert((pos>=0) && (pos<=iter));
  		curr = head;
 
  		for(int i = 0; i <=pos; ++i)
