@@ -24,17 +24,11 @@ import numpy as np
 class MaxHeapify:
 	"""docstring for MAX-Heapify"""
 	def __init__(self, A):
-		# self.largest = 0;
 		self.A = A
 		self.Aheapsize = A.size
 
 	def exchange(self, idx1, idx2):
-		temp = np.copy(self.A)
-		temp[idx1] = self.A[idx2]
-		temp[idx2] = self.A[idx1]
-		self.A = temp
-		return temp
-
+		self.A[idx1], self.A[idx2] = self.A[idx2], self.A[idx1]
 
 	def parent(self, i):
 		return int(np.floor(i/2))
@@ -49,51 +43,38 @@ class MaxHeapify:
 		l = self.left(i)
 		r = self.right(i)
 
-		temp = np.copy(self.A)
-		if ((l < self.Aheapsize) and (temp[l] > temp[i])) :
+		if ((l <= self.Aheapsize-1) and (self.A[l] > self.A[i])) :
 			self.largest = l
 		else:
 			self.largest = i
 
-		if (r < self.Aheapsize) and (temp[r] > temp[self.largest]):
+		if (r <= self.Aheapsize-1) and (self.A[r] > self.A[self.largest]):
 			self.largest = r
 
-		# temp = self.exchange(i, self.largest)
 		if self.largest != i:
 			# exchange
-			temp = self.exchange(i, self.largest)
+			self.exchange(i, self.largest)
 			self.maxheapify(self.largest)
-		# update temp
-		self.A = temp 
-
-		return temp
-
+		
 	def buildmaxheap(self):
-		for i in xrange(int(np.floor(self.A.size/2)), 0, -1):
-			temp = np.copy(self.A)
-			temp = self.maxheapify(i)
-			print(temp)
-			self.A = temp
-		return temp
+		for i in xrange(int(np.floor(self.A.size/2)),0,-1):
+			self.maxheapify(i)
 
 	def heapsort(self):
 		self.buildmaxheap()
 		for i in xrange(self.A.size-1, 0, -1):
-			temp = self.exchange(1, i)
-			tempSize = self.Aheapsize - 1
-			self.A = temp
-			newTemp = self.maxheapify(1)
-
-			self.A = newTemp
-
-		return newTemp
+			self.exchange(1, i)
+			self.Aheapsize -= 1
+			self.maxheapify(1)
+		return self.A
 
 def main():		
 	A = np.array([4,1,3,2,16,9,10,14,8,7], dtype=int)
-	heapsrt = MaxHeapify(A)
-	B = heapsrt.heapsort()
-	print('\nsorted array is\n')
-	print(B)
+	print '\ngiven array:\n', A
+
+	heapsrt = MaxHeapify(A).heapsort()
+	print('\nsorted array is')
+	print(A)
 
 if __name__ == "__main__":
     main()
