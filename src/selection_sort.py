@@ -23,37 +23,21 @@
 
 import numpy as np
 
-def exchange(A, idx1, idx2):
-	A[idx1], A[idx2] = A[idx2], A[idx1]
-	return A
+def selection_sort(A):
+ 	n = A.size
+ 	for i in xrange(0, n-1):
+ 		mini = i
+ 		for j in xrange(0, n):
+ 			if (A[j] < A[mini]):
+ 				mini = j
+ 		temp = A[i]
+ 		A[i] = A[mini]
+ 		A[mini] = temp
 
-def partition(A, p, r):
-	x = A[r]
-	i = p -1
-	for j in xrange(p,r):
-		if (A[j] <= x):
-			i = i + 1
-			exchange(A, i, j)
-	exchange(A, i+1, r)
-	return i + 1
+n = 10
+A = np.random.randint(1,10, size=n)
+print 'given matrix: \n', A
 
-def randomized_partition(A, p, r):
-	i = np.random.randint(p, r)
-	A = exchange(A, r, i)
-	return partition(A, p, r)
+selection_sort(A)
 
-def randomized_quicksort(A, p, r):
-	if (p < r):
-		q = randomized_partition(A, p, r)
-		randomized_quicksort(A, p, q-1)
-		randomized_quicksort(A, q+1, r)
-
-A =  np.random.randint(1,10,size=10)
-print '\nGiven array: \n', A
-
-randomized_quicksort(A, 0, A.size-1)
-print '\nrandomized quicksort\n', A
-
-
-
-
+print '\n\n resulting selection sorted matrix: ', A

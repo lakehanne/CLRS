@@ -21,9 +21,11 @@
 """
 import numpy as np
 
+def gen_array(n):
+	return np.random.randint(1,5, size=(n))
+
 def exchange(A, idx1, idx2):
 	A[idx1], A[idx2] = A[idx2], A[idx1]
-	return A
 
 def quicksort(A, p, r):
 	if(p < r):
@@ -31,25 +33,25 @@ def quicksort(A, p, r):
 		quicksort(A, p, q-1)
 		quicksort(A, q+1, r)
 
-def partition(A,p,r):
+def partition(A, p, r):
 	x = A[r]
-	i = p - 1
-	for j in xrange(p, r-1):
-		if A[j] <= x:
-			i = i+1
-			A = exchange(A, i, j)
-	A = exchange(A, i+1, r)
-	return i+1
-
+	i = p -1
+	for j in xrange(p,r):
+		if (A[j] <= x):
+			i = i + 1
+			exchange(A, i, j)
+	exchange(A, i+1, r)
+	return i + 1
+	
 #example
-A = np.array([4,1,3,2,16,9,10,14,8,7])
+A = gen_array(5)
 print '\ngiven array:\n', A
 
 quicksort(A, 0, A.size-1)
 print '\nsorted array:\n', A
 
 #example 2
-B = np.array([2,8,7,13,5,6,4])
+B = gen_array(10)
 print '\ngiven array:\n', B
 
 quicksort(B, 0, B.size-1)

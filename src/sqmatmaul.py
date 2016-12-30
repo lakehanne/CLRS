@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 """
 /*  
 *  Copyright December 2016
@@ -20,40 +19,27 @@
 * 
 */
 """
-
 import numpy as np
 
-def exchange(A, idx1, idx2):
-	A[idx1], A[idx2] = A[idx2], A[idx1]
-	return A
+def gen_matrix(n):
+	return np.random.randint(1,5, size=(n,n))
 
-def partition(A, p, r):
-	x = A[r]
-	i = p -1
-	for j in xrange(p,r):
-		if (A[j] <= x):
-			i = i + 1
-			exchange(A, i, j)
-	exchange(A, i+1, r)
-	return i + 1
+def sqmatmul(n):
+	A = gen_matrix(n)
+	B = gen_matrix(n)
 
-def randomized_partition(A, p, r):
-	i = np.random.randint(p, r)
-	A = exchange(A, r, i)
-	return partition(A, p, r)
+	C = np.zeros([n,n], dtype=np.int)
+	for i in xrange(0, n):
+		for j in xrange(0,n):
+			C[i][j] = 0
+			for k in xrange(0,n):
+				C[i][j] = C[i][j] + (A[i][k]*B[k][j])
 
-def randomized_quicksort(A, p, r):
-	if (p < r):
-		q = randomized_partition(A, p, r)
-		randomized_quicksort(A, p, q-1)
-		randomized_quicksort(A, q+1, r)
+	return A,B, C
 
-A =  np.random.randint(1,10,size=10)
-print '\nGiven array: \n', A
+A, B, C = sqmatmul(4)
 
-randomized_quicksort(A, 0, A.size-1)
-print '\nrandomized quicksort\n', A
-
-
-
+print 'A: \n', A
+print 'B: \n', B
+print 'C: \n', C
 
