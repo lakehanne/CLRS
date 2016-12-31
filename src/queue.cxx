@@ -37,7 +37,7 @@ public:
 	: maxSize(size), qhead(1), qtail(1), 
 		Q(new T[maxSize])//, [](T* elemp){ delete[] elemp; })
 	{
-		INFO(*Q);
+		// INFO(Q);
 	}
 
 	//destructor
@@ -49,49 +49,68 @@ public:
 	//another way of deleting new[] shared ptr
 	// auto delElem = [](T* elemp){ delete[] elemp;}
 
+	bool isEmpty()
+	{
+		if(qhead == qtail)
+		{
+			INFO("Queue is empty");
+			return true;
+		}
+		else
+		{
+			// INFO("Queue undeflow");
+			return false;
+		}
+		// return ;
+	}
+
 	void enqueue(T&& x)				//this is the insert op
 	{
 		INFO("inserted: " << x << " into queue");
 		Q[qtail] = x;
-		if(qtail == qtail + 1)  //reset
-		{			
-			ERROR("Queue overflow. Wrapping around");
-			qtail = 1;
+		if (qtail == maxSize)
+		{
+			qtail = 1;	 //reset
 		}
-		else{qtail += 1;}
+		else	 
+		{			
+			qtail += 1;
+		}
 	}
 
 	T dequeue()
 	{
 		T x = Q[qhead];
-		if (qhead == qtail)
+		if (qhead == maxSize)
 		{
-			ERROR("Queue underflow. Wrapping around");
-			qhead = 1;			
+			qhead = 1;			//reset
 		}
 		else
 		{
-			qhead += 1;			
+			qhead += 1;
+			INFO("removed " << x << " from queue");
 		}
-		INFO("removed " << x << "from queue");
 		return x;
 	}
 
 	void print() const 
 	{
-		if((qtail || qhead) == 1)
+		if(qtail != qhead)
 		{
-			ERROR("No elements in queue. Queue underflow");
+			for(int i = qhead; i < qtail; ++i)
+			{
+				std::cout << Q[i] << " ";
+			}
+			std::cout << std::endl;
+		}
+		else  if(qhead == (qtail+1))
+		{
+			ERROR("Queue overflow");
 		}
 		else
 		{
-			INFO("Printing elems of queue");
+			ERROR("Queue undeflow");
 		}
-		for(int i = 0; i < maxSize; ++i)
-		{
-			std::cout << Q[i] << " ";
-		}
-		std::cout << std::endl;
 	}
 };
 
@@ -103,7 +122,13 @@ int main(void)
 	Q.enqueue(1000);
 	Q.enqueue(10000);
 	Q.enqueue(100000);
-	INFO(Q.dequeue());
+	Q.dequeue();
+	Q.dequeue();
+	Q.dequeue();
+	Q.dequeue();
+	Q.dequeue();
+	Q.dequeue();
+	Q.dequeue();
 
 	Q.print();
 
