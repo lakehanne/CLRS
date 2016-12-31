@@ -28,14 +28,14 @@ template<typename T>
 class queue{
 private:
 	int maxSize, qtail, qhead;
-	std::shared_ptr<T[]> Q;
+	std::unique_ptr<T[]> Q;
 	// std::shared_ptr<T[]> delElem;
 
 public:
 	//constructors
 	queue(int size)
 	: maxSize(size), qhead(1), qtail(1), 
-		Q(new T[maxSize], [](T* elemp){ delete[] elemp; })
+		Q(new T[maxSize])//, [](T* elemp){ delete[] elemp; })
 	{
 		INFO(*Q);
 	}
