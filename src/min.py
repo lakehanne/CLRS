@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 /*  
 *  Copyright December 2016
@@ -23,21 +21,31 @@
 
 import numpy as np
 
-def selection_sort(A):
- 	n = A.size
- 	for i in xrange(0, n-1):
- 		mini = i
- 		for j in xrange(0, n):
- 			if (A[j] < A[mini]):
- 				mini = j
- 		temp = A[i]
- 		A[i] = A[mini]
- 		A[mini] = temp
+def gen_array(n):
+	return np.random.randint(1,n, size=n)
 
-n = 10
-A = np.random.randint(1,10, size=n)
-print 'given matrix: \n', A
+def minimum(A):
+	n = len(A)
+	mini = A[0]
 
-selection_sort(A)
+	for j in xrange(1, n):
+		if mini > A[j]:
+			mini = A[j]
+	return mini
 
-print '\n\n resulting selection sorted matrix: ', A
+def maximum(A):
+	n = len(A)
+	maxi = A[0]
+
+	for j in xrange(1, n):
+		if maxi < A[j]:
+			maxi = A[j]
+	return maxi
+
+
+A =  gen_array(10)
+print '\nGiven array: \n', A
+
+mini = minimum(A)
+maxi = maximum(A)
+print '\nmin: ', mini, '| max: ', maxi
