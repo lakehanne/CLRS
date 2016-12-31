@@ -1,25 +1,55 @@
+/*  
+*  Copyright December 2016
+*  Author: Olalekan P. Ogunmolu
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+*  you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* 
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+*/
 
+//Questions 10.1-1
 #include <iostream>
-#include <vector>
+#include <memory>
 
 #define INFO(__o__)	std::cout << __o__ << std::endl;
-#define ERROR(__o__)	std::cerr << __o__ << std::endl;
+#define ERROR(__o__) std::cerr << __o__ << std::endl;
  
 template<typename T>
 class stack{
 private:
-	unsigned top, maxSize;
-	T* elem;  				//this holds the elements of the stack
+	int top, maxSize;
+	std::unique_ptr<T[]> elem;  	//this holds the elements of the stack
 public:
 	//constructor
-	stack(unsigned size)
-	: maxSize(size), top(-1), elem(new T[size])
-	{}
+	stack(int size)
+	: maxSize(size), top(-1), elem(new T[maxSize])
+	{
+		INFO("top: " << top << " | maxSize: " << maxSize);
+	}
 
 	//destructor
 	~stack()
 	{
-		delete [] elem;
+		// delete [] elem;
+	}
+
+	void print() const 
+	{
+		INFO("Stack elements are: ");
+		for(auto i = 0; i <= top; ++i)
+		{
+			INFO(elem[i]);
+		}
 	}
 
 	bool isEmpty()
@@ -44,27 +74,27 @@ public:
 
 	T pop()
 	{
-		if (isEmpty()){
-			ERROR("Stack underflow");
-			return -1;
-		}
-		else
+		if (!isEmpty())
 		{
 			top -= 1;
+			INFO("popped " << elem[top+1] << " from stack");
 			return elem[top+1];
-			INFO("removed " << elem[top+1] << " from stack");
 		}
 	}
 };
 
 int main(void)
 {
-	stack<unsigned> s(200);
+	stack<int> s(6);
+	//Question 10.1
+	s.push(4);
 	s.push(1);
-	s.push(25);
-	s.push(50);
-	s.push(500);
+	s.push(3);
 	s.pop();
+	s.push(8);
+	s.pop();
+
+	s.print();
 
 	return 0;
 }
