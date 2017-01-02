@@ -19,8 +19,6 @@
 
 #include "HashNode.h"
 #include "KeyHash.h"
-#ifndef __MEMORY__
-#define __MEMORY__
 
 // Hash map class template
 template <typename K, typename V, typename Func = KeyHash<K> >
@@ -28,23 +26,24 @@ class HashMap
 {
 private:
     // hash slot
-    HashNode<K, V>* slot[];
+    // std::unique_ptr<<K, V>[]> slot;
+    HashNode<K, V>** slot;
     Func hashFunc;
 public:
     HashMap() {
         // construct zero initialized hash slot of size
-        // slot = new HashNode<K, V> *[SLOT_SIZE]();
-        std::unique_ptr<HashNode<K, V> [SLOT_SIZE]() > slot;
+        slot = new HashNode<K, V> *[SLOT_SIZE]();
+        // slot = new HashNode<K, V>[SLOT_SIZE]();
     }
 
     ~HashMap() {
         // destroy all buckets one by one
         for (int i = 0; i < SLOT_SIZE; ++i) {            
-            std::unique_ptr<HashNode<K,V>> elem = slot[i];
-            // HashNode<K, V> *elem = slot[i];
+            // std::unique_ptr<HashNode<K,V>> elem = slot[i];
+            HashNode<K, V> *elem = slot[i];
             while (elem != nullptr) {
-                std::unique_ptr<HashNode<K, V>> prev = elem;
-                // HashNode<K, V> *prev = elem;
+                // std::unique_ptr<HashNode<K, V>> prev = elem;
+                HashNode<K, V> *prev = elem;
                 elem = elem->getNext();
                 delete prev;
             }
@@ -54,12 +53,15 @@ public:
         delete [] slot;
     }
 
-    bool get(const K &key, V &value) {
+    bool get(K&& key, V &value) {
         unsigned long hashValue = hashFunc(key);
         HashNode<K, V> *elem = slot[hashValue];
+        // std::unique_ptr<HashNode<K, V>> elem = slot[hashValue];
 
-        while (elem != nullptr) {
-            if (elem->getKey() == key) {
+        while (elem != nullptr) 
+        {
+            if (elem->getKey() == key) 
+            {
                 value = elem->getValue();
                 return true;
             }
@@ -68,21 +70,23 @@ public:
         return false;
     }
 
-    void put(const K &key, const V &value) {
+    void put(K&& key, V&& value) 
+    {
         unsigned long hashValue = hashFunc(key);
-        std::unique_ptr<HashNode<K, V>> prev = nullptr;
-        // HashNode<K, V> *prev = nullptr;
-        // HashNode<K, V> *elem = slot[hashValue];
-        std::unique_ptr<K, V> elem = slot[hashValue];
+        // std::unique_ptr<HashNode<K, V>> prev = nullptr;
+        HashNode<K, V> *prev = nullptr;
+        HashNode<K, V> *elem = slot[hashValue];
+        // std::unique_ptr<K, V> elem = slot[hashValue];
 
-        while (elem != nullptr && elem->getKey() != key) {
+        while (elem != nullptr && elem->getKey() != key) 
+        {
             prev = elem;
             elem = elem->getNext();
         }
 
         if (elem == nullptr) {
-            std::unique_ptr<HashNode<K, V>(key, value)> elem;
-            // elem = new HashNode<K, V>(key, value);
+            // std::unique_ptr<HashNode<K, V>(key, value)> elem;
+            elem = new HashNode<K, V>(key, value);
             if (prev == nullptr) {
                 // insert as first bucket
                 slot[hashValue] = elem;
@@ -97,10 +101,10 @@ public:
 
     void remove(const K &key) {
         unsigned long hashValue = hashFunc(key);
-        std::unique_ptr<HashNode<K, V> > prev = nullptr;
-        // HashNode<K, V> *prev = nullptr;
-        std::unique_ptr<HashNode<K, V> > elem = slot[hashValue];
-        // HashNode<K, V> *elem = slot[hashValue];
+        // std::unique_ptr<HashNode<K, V> > prev = nullptr;
+        HashNode<K, V> *prev = nullptr;
+        // std::unique_ptr<HashNode<K, V> > elem = slot[hashValue];
+        HashNode<K, V> *elem = slot[hashValue];
 
         while (elem != nullptr && elem->getKey() != key) {
             prev = elem;
@@ -118,9 +122,7 @@ public:
             } else {
                 prev->setNext(elem->getNext());
             }
-            // delete elem;
+            delete elem;
         }
     }
 };
-
-#endif
