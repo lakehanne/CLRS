@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include <cassert>
 
 #include <list_adt.hpp>
@@ -14,6 +15,7 @@ private:
 public:
 	T value;		//value for the node
 	Link *next; 	//pointer to next node in the list
+	// std::unique_ptr<Link> next;
 
 	//constructors
 	Link(const T& val, Link* nextval= nullptr)

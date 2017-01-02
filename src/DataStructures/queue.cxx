@@ -37,7 +37,6 @@ public:
 	: maxSize(size), qhead(1), qtail(1), 
 		Q(new T[maxSize])//, [](T* elemp){ delete[] elemp; })
 	{
-		// INFO(Q);
 	}
 
 	//destructor

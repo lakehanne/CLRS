@@ -78,8 +78,8 @@ public:
 		{
 			top -= 1;
 			INFO("popped " << elem[top+1] << " from stack");
-			return elem[top+1];
 		}
+		return elem[top+1];
 	}
 };
 
