@@ -17,29 +17,25 @@
 * 
 */
 
-#include <memory>
 #include <cassert>
-#include <algorithm>
 #include <iostream>
-
-#include "list_adt.hpp"
 
 //List implementation
 template<typename T>
-class ListImpl : public List<T>
+class arrayList 
 {
 private:
 	unsigned maxSize;			//maximum list size
 	unsigned listSize;			//current list size now
-	unsigned curPos;				//position jof current element
+	unsigned curPos;				//position of current element
 	T*	listArray;			//array holding list elements
 
 public:
-	ListImpl(unsigned defaultSize) 
+	arrayList(unsigned defaultSize=5000) 
 	: maxSize(defaultSize), curPos(0), listSize(curPos), listArray(new T[maxSize])
 	{}
 	//destructor
-	~ListImpl()
+	~arrayList()
 	{ 
 		delete [] listArray;
 	}
@@ -66,9 +62,7 @@ public:
 
 	void append(const T& elem)
 	{
-		// assert(listSize < maxSize);
 		listArray[listSize++] = elem;
-
 	}
 
 	T remove()
@@ -132,9 +126,7 @@ public:
 
 int main(void)
 {
-	ListImpl<int> limp(500);
-	// ListImpl(5) limp;
-	// limp.append(10);
+	arrayList<int> limp(500);
 	limp.setPos(2);
 	std::cout << "current position: " << limp.currPos() <<"\n"
 			  << "size: " << limp.size()<< std::endl;
