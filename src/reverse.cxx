@@ -19,11 +19,13 @@
 
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 #include <string>
 
 void reverse(char *str)
 {	
 	char * end = str;
+
 	char tmp;		
 		
 	if (str) 
@@ -44,15 +46,12 @@ void reverse(char *str)
 		 	*end-- = tmp;			
 	 	}		
 	 }
-
-	 std::cout << "original string: " << str << "\n";
-	 std::cout << "reversed string: " << tmp << "\n";
 }
 
 int main()
 {
-	// char* orig = "lekan";
-	reverse("korede");
+	char* orig = "lekan";
+	reverse(orig);
 
 	return 0;
 }

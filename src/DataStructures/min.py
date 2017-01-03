@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 /*  
 *  Copyright December 2016

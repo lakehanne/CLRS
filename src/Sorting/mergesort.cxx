@@ -19,70 +19,83 @@
 
 #include <iostream>
 #include <array>
-#include <cmath>
-#include <climits>
+#include <limits>
 
-int sz = 10;		//an example length of array to be sorted
+using namespace std;
 
-std::array<int,10> merge_algo(std::array<int,10> array)
+template<typename T>
+void merge(T* A, T start, T mid, T end)
 {
-	std::cout << "here";
-	int p = 0; 
-	int q = 5;
-	int r = array.size();
-
-	std::cout << p << ", " << q << ", " << r ;
-	//split the array into two equal subarrays
-	int n1= q-p+1;
-	int n2 = r-q;
-
-	std::array<int, 5> L {array[p], array[p+1],array[p+2],array[p+3],array[p+4]};
-	std::array<int, 5> R;
-
+	auto n1 = mid-start+1;
+	auto n2 = end-mid;
+	//initialize the two sub-arrays
+	T L[n1+1] = {};
+	T R[n2+1] = {};
+	// cout << "n1: " << n1 << "\tn2: " << n2 << endl;
+	cout << "L[i]: " << "\t";
 	for(auto i = 0; i < n1; ++i)
 	{
-		L[i] = array[p+i-1];
-	} 
-
-	for(auto i = 0; i < n2; ++i)
-		R[i] = array[q+i];
-
-	auto inf = 1e6; //static_cast<int>(1.0/0.0); //std::numeric_limits<int>::max();
-	L[n1] = inf;
-	R[n2] = inf;
-
-	auto i= 1, j = 1;
-
-	for(auto k = p; p < r; ++k)
-	{
-		if(L[i] <= R[j])
-		{
-			array[k] = L[i];
-			i = i +1;			
-		}
-		else
-		{
-			array[k] = R[j];
-			j = j + 1;	
-		} 
+		L[i] = A[start+i-1];
+		cout << L[i] << " ";
 	}
-
-	return array;
-}
-
-int main()
-{
-	std::array<int, 10> A {2,4,5,7,1,2,3,6,10,9};
-
-	for(auto el : A) {std::cout << el << " ";}
-
-	auto merged = merge_algo(A);
-
-	std::cout << "merge sorted array is " << std::endl;
-
-	for(auto cit = merged.cbegin(); cit!=merged.cend(); ++cit)
-		std::cout << *cit << " "; 
+	std::cout << "\n";
+	for(auto j = 0; j < n2; ++j)
+	{
+		R[j] = A[mid+j];
+	}
+	//allocate sentinels
+	L[n1+1] = std::numeric_limits<T>::max();
+	R[n1+1] = std::numeric_limits<T>::max();
+	auto i = 1; 
+	auto j = 1;
+	for(auto k = start; j < end; ++k){
+		if(L[i] < R[i]){
+			A[k] = L[i];
+			i = i+1;
+		}
+		else{
+			A[k] = R[j];
+			j = j + 1;
+		}
+		cout << A[k] << " ";
+	}
 	std::cout << "\n";
 
-	return EXIT_SUCCESS;
+}
+
+template<typename T>
+void mergesort(T A[], T start, T end){
+	if(start < end){
+	//mid is the midpoint between start and end
+	int mid = static_cast<int>(floor((start + end)/2));
+	// cout << "mid: " << mid << endl;
+	mergesort(A, start, mid);
+	mergesort(A, mid+1, end);
+	merge(A, start, mid, end);		
+	}
+}
+
+int main(int argc, char** argv){
+	if(argc<2){
+		std::cerr<< "you need to enter the array elements" << "\n";
+	}
+
+	// std::cout << "Enter the elements of the array followed by RETURN key" << "\n" ;
+	int A[10] = {};
+	A[0] = atoi(argv[1]);
+
+	std::cout << "\n\nYou have entered the array: " << std::endl;
+	for(auto i = 0; i < 10; ++i)
+	{		
+		A[i] = atoi(argv[i+1]);
+		cout << A[i] << " ";
+	}
+	cout << "\n";
+	
+	mergesort(A, 0, 9);
+
+	std::cout << "\n\nsorted array is " << std::endl;
+	for(auto i = 0; i < 10; ++i){
+		std::cout << A[i] << " " ;		
+	}
 }

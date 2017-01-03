@@ -99,7 +99,7 @@ public:
         }
     }
 
-    void remove(const K &key) {
+    void remove(K&& key) {
         unsigned long hashValue = hashFunc(key);
         // std::unique_ptr<HashNode<K, V> > prev = nullptr;
         HashNode<K, V> *prev = nullptr;

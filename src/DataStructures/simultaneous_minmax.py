@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 This algorithm has a worst case running time of O(|_3n/2_|). Section 9.1 in CLRS
 

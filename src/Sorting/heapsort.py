@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 /*  
 *  Copyright December 2016
@@ -25,54 +26,60 @@ class MaxHeapify:
 	"""docstring for MAX-Heapify"""
 	def __init__(self, A):
 		self.A = A
-		self.Aheapsize = A.size
+		self.n = 0
+		self.largest = 0
 
-	def exchange(self, idx1, idx2):
-		self.A[idx1], self.A[idx2] = self.A[idx2], self.A[idx1]
+	def exchange(self, A, idx1, idx2):
+		A[idx1], self.A[idx2] = A[idx2], self.A[idx1]
+		return A
 
 	def parent(self, i):
-		return int(np.floor(i/2))
+		return int((i-1)/2)
 
 	def left(self, i):
-		return 2*i
+		return 2*i+1
 
 	def right(self, i):
-		return 2*i + 1
+		return 2*i+2
 
-	def maxheapify(self, i):
+	def maxheapify(self, A, i):
 		l = self.left(i)
 		r = self.right(i)
 
-		if ((l <= self.Aheapsize-1) and (self.A[l] > self.A[i])) :
+		if ((l <= self.n-1) and (A[l] > A[i])) :
 			self.largest = l
 		else:
 			self.largest = i
 
-		if (r <= self.Aheapsize-1) and (self.A[r] > self.A[self.largest]):
+		if (r <= self.n-1) and (A[r] > A[self.largest]):
 			self.largest = r
 
 		if self.largest != i:
 			# exchange
-			self.exchange(i, self.largest)
-			self.maxheapify(self.largest)
+			A = self.exchange(A, i, self.largest)
+			self.maxheapify(A, self.largest)
 		
-	def buildmaxheap(self):
-		for i in xrange(int(np.floor(self.A.size/2)),0,-1):
-			self.maxheapify(i)
+	def buildmaxheap(self, A):
+		self.n = A.size
+		for i in xrange(int(np.floor(self.n/2)),0,-1):
+			self.maxheapify(A, i)
 
-	def heapsort(self):
-		self.buildmaxheap()
-		for i in xrange(self.A.size-1, 0, -1):
-			self.exchange(1, i)
-			self.Aheapsize -= 1
-			self.maxheapify(1)
-		return self.A
+	def heapsort(self, A):
+		self.buildmaxheap(A)
+		for i in xrange(len(A)-1, 1, -1):
+			A = self.exchange(A, 0, i)
+			self.n -= 1
+			self.maxheapify(A, 0)
+		return A
+
+def gen_array(n):
+	return np.random.randint(1,5, size=(n))
 
 def main():		
-	A = np.array([4,1,3,2,16,9,10,14,8,7], dtype=int)
+	A = gen_array(11)
 	print '\ngiven array:\n', A
 
-	heapsrt = MaxHeapify(A).heapsort()
+	heapsrt = MaxHeapify(A).heapsort(A)
 	print('\nsorted array is')
 	print(A)
 

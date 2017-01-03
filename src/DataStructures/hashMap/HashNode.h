@@ -1,9 +1,15 @@
 // Hash node class template
 template <typename K, typename V>
 class HashNode {
+private:
+    // key-value pair
+    K key;
+    V value;
+    // next bucket with the same key
+    HashNode *next;
 public:
-    HashNode(const K &key, const V &value) :
-    key(key), value(value), next(NULL) {
+    HashNode(const K& key, const V& value) :
+    key(key), value(value), next(nullptr) {
     }
 
     K getKey() const {
@@ -25,11 +31,4 @@ public:
     void setNext(HashNode *next) {
         HashNode::next = next;
     }
-
-private:
-    // key-value pair
-    K key;
-    V value;
-    // next bucket with the same key
-    HashNode *next;
 };

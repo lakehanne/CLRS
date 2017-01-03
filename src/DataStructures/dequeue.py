@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python
 """
 10.1-5
 Whereas a stack allows insertion and deletion of elements at only one end, and a
