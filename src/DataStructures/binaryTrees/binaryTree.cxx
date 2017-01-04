@@ -44,7 +44,6 @@ struct treeNode{
 template<typename T>
 class binSearch{
 private:
-	treeNode<T>* root; 			// root and current nodes of the tree
 	treeNode<T>* y;
 	T counter; 					//keep track of current length of tree
 
@@ -52,6 +51,19 @@ private:
 	{
 		root = new treeNode<T>;
 		y = new treeNode<T>;
+	}
+
+public:
+
+	treeNode<T>* root; 			// root and current nodes of the tree
+	binSearch()
+	{
+		init();
+	}
+
+	~binSearch()
+	{
+		eraseAll();
 	}
 
 	//delete all nodes one after the other
@@ -68,24 +80,14 @@ private:
 		delete y;
 	}
 
-public:
-	binSearch()
-	{
-		init();
-	}
-
-	~binSearch()
-	{
-		eraseAll();
-	}
-
 	T minimum(treeNode<T>* subNode);
 	T maximum(treeNode<T>* subNode);
+	T find(treeNode<T>* subNode, const T& elem);
+	void treeSuccessor(treeNode<T>* subNode);
 	void insert(treeNode<T>* inNode);
 	void inorderTreeWalk(treeNode<T>* subNode);
-	void postOrderTreeWalk();
-	void preOrderTreeWalk();
-	T treeSearch(treeNode<T>* subNode, const T& elem);
+	void postOrderTreeWalk(treeNode<T>* subNode);
+	void preOrderTreeWalk(treeNode<T>* subNode);
 };
 
 template<typename T>
@@ -99,7 +101,25 @@ void binSearch<T>::inorderTreeWalk(treeNode<T>* subNode)
 }
 
 template<typename T>
-T binSearch<T>::treeSearch(treeNode<T>* subNode, const T& elem){
+void binSearch<T>::postOrderTreeWalk(treeNode<T>* subNode){
+	if(subNode != nullptr){
+		postOrderTreeWalk(subNode->left);
+		postOrderTreeWalk(subNode->right);
+		OUTL(subNode->value << " ");
+	}
+}
+
+template<typename T>
+void binSearch<T>::preOrderTreeWalk(treeNode<T>* subNode){
+	if(subNode != nullptr){
+		OUTL(subNode->value << " ");
+		preOrderTreeWalk(subNode->left);
+		preOrderTreeWalk(subNode->right);
+	}
+}
+
+template<typename T>
+T binSearch<T>::find(treeNode<T>* subNode, const T& elem){
 	while(subNode != nullptr || elem != subNode->value){
 	if(elem < subNode->value){
 		subNode = subNode->left;
@@ -134,18 +154,18 @@ inline void binSearch<T>::insert(treeNode<T>* inNode){
 	treeNode<T>* x = root;
 	while( x!= nullptr){
 		y = x;
-		if(inNode->value < (x->value)){
-			x = x -> left;
+		if((inNode->value) < (x->value)){
+			x = x->left;
 		}
 		else{
 			x = x->right;
 		}
 	}
-	inNode = y;
+	// inNode->value = y;
 	if(y == nullptr){
-		root = inNode; 	//Tree was empty
+		root = inNode; 					//Tree was empty
 	}
-	else if (inNode->value < y->value){
+	else if ((inNode->value) < (y->value)){
 		y->left = inNode;
 	}
 	else{
@@ -154,21 +174,42 @@ inline void binSearch<T>::insert(treeNode<T>* inNode){
 	OUT("inserted " << inNode->value << " into tree");
 }
 
-int main(void){
+template<typename T>
+void binSearch<T>::treeSuccessor(treeNode<T>* subNode){
+	if(subNode->right!=nullptr){
+		return minimum(subNode->right);
+	}
+	y = subNode;
+}
 
-	binSearch<int> bSearch;
-	treeNode<int>* tNode = new treeNode<int>;
+
+int main(void){
+	binSearch<int>* bSearch = new binSearch<int>;
 	int elem;
 	for(;;){
+		treeNode<int>* tNode = new treeNode<int>;
 		OUT("Input keys to insert (type -6545 to break):");
 		std::cin>> elem; //tNode->value;
 		tNode->value = elem;
 		if(elem == -6545){
+			delete tNode;
 			break;
 		}
-		bSearch.insert(tNode);
+		bSearch->insert(tNode);
+		// delete tNode;
 	}
-	bSearch.inorderTreeWalk(tNode);
 
-	delete tNode;
+	OUT("\ninorderTreeWalk");
+	bSearch->inorderTreeWalk(bSearch->root);
+	std::cout << std::endl;
+
+	OUT("\npostOrderTreeWalk");
+	bSearch->postOrderTreeWalk(bSearch->root);
+	std::cout << std::endl;
+
+	OUT("\npreOrderTreeWalk");
+	bSearch->preOrderTreeWalk(bSearch->root);
+	std::cout << std::endl;
+
+	// bSearch->eraseAll();s
 }
