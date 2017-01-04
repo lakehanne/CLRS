@@ -51,10 +51,10 @@ template <typename T>
 class SLList 
 {
 private:
-	node<T>* head;   //pointer to list header
-	node<T>* tail;   //pointer to list's last value
-	node<T>* current;   //access to currentent value
-	int count;	//size of list
+	node<T>* head;   	//pointer to header node
+	node<T>* tail;   	//pointer to tail node
+	node<T>* current;   //pointer to current node
+	int count;			//to keep track of listSize
 
 	void init()
 	{
@@ -106,7 +106,7 @@ public:
  	/*Insert value at currentent position */ //theta(1)
  	void insert(const T& elem) 	{
  		current->next = new node<T> (elem, current->next);
- 		if(tail == current){
+ 		if(tail == current){ //this handles the when the current node is pointing to the tail
  			tail = current -> next; //new tail
  		}
  		++count ;
@@ -123,11 +123,12 @@ public:
  	T remove()// if delete takes constant time, this is also theta(1) time
  	{
  		while(current->next!=nullptr){
- 			T elem = current->next->value;
+ 			T elem = current->next->value;		//if 
  			node<T>* ltemp = current->next;		//remember node
 
- 			if(tail == current->next)
+ 			if(tail == current->next){	//reset tail
  				tail == current ;   				//remove from list
+ 			}
  			delete ltemp;
  			--count;
  			return elem;
@@ -192,7 +193,7 @@ public:
 
 int main()
 {
-	SLList<int> ll(5000);
+	SLList<int> ll();
 
 	ll.insert(200);
 

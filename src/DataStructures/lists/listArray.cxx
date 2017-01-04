@@ -25,6 +25,7 @@ template<typename T>
 class arrayList 
 {
 private:
+	//a dynamic arrayList wouldn't need maxSize
 	unsigned maxSize;			//maximum list size
 	unsigned listSize;			//current list size now
 	unsigned curPos;				//position of current element

@@ -1,128 +1,193 @@
 #include <iostream>
+#include <cassert>
 #include <string>
 
-using std::cout;
-using std::endl;
+
+//helper function for printing
+#define INFO(__o__) std::cout << __o__ << std::endl;
 
 /*doubly linked list implementation*/
-
 template<typename T>
-class Link
+struct node
 {
-private: 
-	static Link<T>* freelist;             //ref to freelist head
-public:
-	Link<T>* next;			//pointer to next node in list
-	Link<T>* prev;			//pointer to previous node in list
+	static node<T>* freelist;             //ref to freelist head
+	node<T>* next;			//pointer to next node in list
+	node<T>* prev;			//pointer to previous node in list
 	T value;				//value for the node
 
 	//Constructors
-	Link(const T& val, Link* prevp, Link* nextp)
+	node(const T& val, node* prevp, node* nextp)
 	: value(val), prev(prevp), next(nextp)
 	{}
 
-	Link(Link* prevp = nullptr, Link* nextp = nullptr)
-	{
-		prev = prevp;
-		next = nextp;
-	}
+	node(node* prevp = nullptr, node* nextp = nullptr)
+	:prev(prevp), next(nextp)
+	{	}
 
 	/*overload the new operator*/
 	void* operator new(size_t)
 	{
-		if(freelist == nullptr)
-			return ::new Link; //create extra space
-		
-		Link<T>* temp = freelist;
+		if(freelist == nullptr){
+			return ::new node; 			//create space
+		}		
+		node<T>* temp = freelist;		//can take from freelist
 		freelist = freelist->next;
-		return temp;			//return the link
+		return temp;					//return the node
 	}
 
 	/*overload the delete operator*/
 	void operator delete(void *ptr)
 	{
-		((Link<T>*)ptr)->next = freelist;  //put on freelist
-		freelist = (Link<T>*)ptr;
+		((node<T>*)ptr)->next = freelist;  //put on freelist
+		freelist = (node<T>*)ptr;
 	}
 };
 
-//create the freelist hea dpointer 
+//create the freelist head pointer 
 template <typename T>
+node<T>* node<T>::freelist = nullptr;
+
+template<typename T>
 class DLList
 {
 private:
-	Link<T>* head;   //pointer to list header
-	Link<T>* next, prev;
-	Link<T>* curr;   //access to current value
-	// Link<T>* \
-	Link<T>::freelist = nullptr;  //freelist to hold header of nodes
-	Link<T>* tail;   //pointer to list's last value
-	unsigned iter;
+	node<T>* head;   		//pointer to list header
+	node<T>* current;   		//pointer to current node	
+	node<T>* tail;   		//pointer to tail node
+	unsigned counter;
 
 
 	void init()
 	{
-		curr = tail = head = new Link<T>;
-		iter = 0;
+		current = tail = head = new node<T>;
+		counter = 0;
 	}
 
 	void eraseall()
 	{
 		while(head != nullptr)
 		{
-			curr = head;
+			current = head;
 			head = head->next;
-			delete curr;
+			delete current;
 		}
 	}
 
-	//insert element at the present position
 public:
 	//constructors
-	DLList() {};
-	~DLList() {}
+	DLList() 
+	{
+		init();
+	};
+	~DLList() 
+	{
+		eraseall();
+	}
 
+	//insert element at the present position
 	void insert(const T& elem)
 	{
-	  curr->next = curr->next->prev = new Link<T>(elem, curr, curr->next);
-		++iter;
+		//the header and tailer nodes means we can do away with node checking
+	  current->next = current->next->prev = new node<T>(elem, current, current->next);
+		++counter;
+	  INFO("inserted " << elem);
 	}
 
 	void append(const T& elem)
 	{
 		tail->prev = tail->prev->next \
-				   = new Link<T>(elem, tail->prev, tail);
-				   ++iter;
+				   = new node<T>(elem, tail->prev, tail);
+				   ++counter;
+	  INFO("appended " << elem);
 	}
 
 	T remove()
 	{
-		if(curr->next==tail)
+		if(current->next==tail)			//nothing to remove
 			return nullptr;
-		T elem = curr->next->elem;   //remember value
-		Link<T>* ltemp = curr->next; //remember link node
-		curr->next->next->previous = curr;
-		curr->next = curr->next->next; //remove from list
+		T elem = current->next->elem;   	//remember value; create a copy
+		node<T>* ltemp = current->next; 	//remember link node; create a copy of current node
+		current->next->next->previous = current;
+		current->next = current->next->next; //remove from list
 		delete ltemp;
-		--iter;
+		--counter;
+
+	  	INFO("removed " << elem);
 
 		return elem;
 	}
 
 	void previous()
 	{
-		if(curr != head)
+		if(current != head)
 		{
-			curr = curr->prev;
+			current = current->prev;
 		}
 	}
+
+	void begin()
+	{
+		current = head;
+	}
+
+	void end()
+	{
+		current = tail;
+	}
+
+	void setPos(int pos) //theta(i) time since we have to march down from head node to currentent position
+	{
+		assert((pos>=0) && (pos<=counter));
+		current = head;
+
+		for(int i = 0; i <=pos; ++i)
+			current = current->next;
+	}
+
+	void print()
+	{
+		INFO( "currentent values of the list: " );
+		begin();   //set current to beginning
+		for(unsigned i = 0; i <=counter; ++i)
+		{			
+			setPos(i);
+			T val = getCurElem();
+			INFO( val );
+		}	
+
+		INFO( "size of list: " << size() );
+	}
+
+	int size() const 	{
+		INFO("Size is " << counter);
+		return counter;
+	}
+
+	const T& getCurElem()
+	{
+		while(current->next != nullptr){
+			return current->next->value;
+		}
+	}
+
+	void clear() 	//clear all list contents
+	{ 
+		eraseall(); 
+		init();
+ 	}
 };
 
 int main(void)
 {
-	DLList<std::string> dll;
+	DLList<int> dll;
+	INFO("Constructed object");
+	auto a = 3;
+	dll.append(50);
+	dll.insert(a);
+	dll.insert(40);
+	dll.size();
 
-	std::string greet = "hello";
-	dll.append(greet);
-	return 0;
+	dll.append(a);
+	dll.print();
+	// return 0;
 }
