@@ -17,8 +17,50 @@
 * 
 */
 
-#include "HashNode.h"
-#include "KeyHash.h"
+static const int SLOT_SIZE = 128;
+
+template <typename K>
+struct KeyHash {
+    unsigned long operator()(const K& key) const
+    {
+        return reinterpret_cast<unsigned long>(key) % SLOT_SIZE;
+    }
+};
+
+// Hash node class template
+template <typename K, typename V>
+class HashNode {
+private:
+    // key-value pair
+    K key;
+    V value;
+    // next bucket with the same key
+    HashNode *next;
+public:
+    HashNode(const K& key, const V& value) :
+    key(key), value(value), next(nullptr) {
+    }
+
+    K getKey() const {
+        return key;
+    }
+
+    V getValue() const {
+        return value;
+    }
+
+    void setValue(V value) {
+        HashNode::value = value;
+    }
+
+    HashNode *getNext() const {
+        return next;
+    }
+
+    void setNext(HashNode *next) {
+        HashNode::next = next;
+    }
+};
 
 // Hash map class template
 template <typename K, typename V, typename Func = KeyHash<K> >
@@ -33,16 +75,13 @@ public:
     HashMap() {
         // construct zero initialized hash slot of size
         slot = new HashNode<K, V> *[SLOT_SIZE]();
-        // slot = new HashNode<K, V>[SLOT_SIZE]();
     }
 
     ~HashMap() {
         // destroy all buckets one by one
         for (int i = 0; i < SLOT_SIZE; ++i) {            
-            // std::unique_ptr<HashNode<K,V>> elem = slot[i];
             HashNode<K, V> *elem = slot[i];
             while (elem != nullptr) {
-                // std::unique_ptr<HashNode<K, V>> prev = elem;
                 HashNode<K, V> *prev = elem;
                 elem = elem->getNext();
                 delete prev;
