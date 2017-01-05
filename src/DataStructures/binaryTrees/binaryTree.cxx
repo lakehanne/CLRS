@@ -95,6 +95,7 @@ public:
 	void insert(treeNode<T>* inNode);
 	treeNode<T>* treeSuccessor(treeNode<T>* subNode);
 	void transplant(treeNode<T>* u, treeNode<T>* v);
+	void remove(treeNode<T>* z);
 };
 
 template<typename T>
@@ -166,6 +167,7 @@ treeNode<T>* bsTree<T>::find(treeNode<T>* subNode, const T& elem)
 	return subNode;
 }
 
+/*O(h) time on a tree of height h*/
 template<typename T>
 inline void bsTree<T>::insert(treeNode<T>* inNode){
 	temp = nullptr;
@@ -223,6 +225,28 @@ void bsTree<T>::transplant(treeNode<T>* u, treeNode<T>* v)
 	}
 }
 
+template<typename T>
+void bsTree<T>::remove(treeNode<T>* z)
+{
+	if(z->left==nullptr){
+		transplant(z, z->right);
+	}
+	else if(z->right==nullptr){
+		transplant(z, z->left);
+	}
+	else{
+		temp = treeSuccessor(z);
+		if(temp != z){
+			transplant(temp, temp->right);
+			temp->right = z->right;
+			temp->right = temp;
+		}
+		transplant(z, temp);
+		temp->left = z->left;
+		temp->left = temp;
+	}
+	OUT("removed: " << z->value);
+}
 
 int main(void){
 	bsTree<int>* bSearch = new bsTree<int>;
@@ -245,11 +269,29 @@ int main(void){
 	bSearch->minimum(bSearch->getRoot());
 	bSearch->maximum(bSearch->getRoot());
 	auto suc = bSearch->treeSuccessor(bSearch->getRoot());
-	OUT("Successor: " << suc);
 
 	auto f = 6;
 	auto res = bSearch->find(bSearch->getRoot(), 6);
 	OUT("\nSearch for " << 6 << " returned " << res->value);
+
+	/*test remove*/
+	treeNode<int>* tempNode = new treeNode<int>;
+	for(;;){
+		OUT("Input keys to insert (type \"-0\" to break):");
+		std::cin>> tempNode->value;
+		if(tempNode->value == -0){
+			break;
+		}
+		bSearch->insert(tempNode);
+		tempNode = tempNode->reset(new treeNode<int>);
+	}
+	OUT("Printing members of tempNode");
+	bSearch->inorderTreeWalk(tempNode);
+	bSearch->remove(tempNode);	
+	OUT("\nPrinting members of root node after removing tempNode");
+	bSearch->inorderTreeWalk(bSearch->getRoot());
+
+	delete tempNode;
 
 	return EXIT_SUCCESS;
 }
