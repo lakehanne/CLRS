@@ -39,29 +39,34 @@ struct treeNode{
 	treeNode(const N& value)
 	: value(value), left(nullptr), right(nullptr)
 	{}
+
+	treeNode<N>* reset(treeNode<N>* x){
+		delete x;
+		treeNode<N>* px = new treeNode<N>;
+		return px;
+	}
 };
 
 template<typename T>
-class binSearch{
+class bsTree{
 private:
-	treeNode<T>* y;
+	treeNode<T>* temp;
+	treeNode<T>* root; 			// root and current nodes of the tree
 	T counter; 					//keep track of current length of tree
 
 	void init()
 	{
-		root = new treeNode<T>;
-		y = new treeNode<T>;
+		root = nullptr; 
+		temp = nullptr; 
 	}
 
 public:
-
-	treeNode<T>* root; 			// root and current nodes of the tree
-	binSearch()
+	bsTree()
 	{
 		init();
 	}
 
-	~binSearch()
+	~bsTree()
 	{
 		eraseAll();
 	}
@@ -77,21 +82,28 @@ public:
 		else if(root != nullptr){
 			delete root;
 		}
-		delete y;
+		delete temp;
 	}
 
-	T minimum(treeNode<T>* subNode);
-	T maximum(treeNode<T>* subNode);
-	T find(treeNode<T>* subNode, const T& elem);
-	void treeSuccessor(treeNode<T>* subNode);
-	void insert(treeNode<T>* inNode);
+	treeNode<T>* getRoot() const;
 	void inorderTreeWalk(treeNode<T>* subNode);
-	void postOrderTreeWalk(treeNode<T>* subNode);
 	void preOrderTreeWalk(treeNode<T>* subNode);
+	void postOrderTreeWalk(treeNode<T>* subNode);
+	treeNode<T>* minimum(treeNode<T>* subNode);
+	treeNode<T>* maximum(treeNode<T>* subNode);
+	treeNode<T>* find(treeNode<T>* subNode, const T& elem);
+	void insert(treeNode<T>* inNode);
+	treeNode<T>* treeSuccessor(treeNode<T>* subNode);
+	void transplant(treeNode<T>* u, treeNode<T>* v);
 };
 
 template<typename T>
-void binSearch<T>::inorderTreeWalk(treeNode<T>* subNode)
+treeNode<T>* bsTree<T>::getRoot()	const
+{
+	return this->root;
+}
+template<typename T>
+void bsTree<T>::inorderTreeWalk(treeNode<T>* subNode)
 {
 	if(subNode != nullptr){
 		inorderTreeWalk(subNode->left);
@@ -101,16 +113,7 @@ void binSearch<T>::inorderTreeWalk(treeNode<T>* subNode)
 }
 
 template<typename T>
-void binSearch<T>::postOrderTreeWalk(treeNode<T>* subNode){
-	if(subNode != nullptr){
-		postOrderTreeWalk(subNode->left);
-		postOrderTreeWalk(subNode->right);
-		OUTL(subNode->value << " ");
-	}
-}
-
-template<typename T>
-void binSearch<T>::preOrderTreeWalk(treeNode<T>* subNode){
+void bsTree<T>::preOrderTreeWalk(treeNode<T>* subNode){
 	if(subNode != nullptr){
 		OUTL(subNode->value << " ");
 		preOrderTreeWalk(subNode->left);
@@ -119,41 +122,56 @@ void binSearch<T>::preOrderTreeWalk(treeNode<T>* subNode){
 }
 
 template<typename T>
-T binSearch<T>::find(treeNode<T>* subNode, const T& elem){
-	while(subNode != nullptr || elem != subNode->value){
-	if(elem < subNode->value){
-		subNode = subNode->left;
+void bsTree<T>::postOrderTreeWalk(treeNode<T>* subNode){
+	if(subNode != nullptr){
+		postOrderTreeWalk(subNode->left);
+		postOrderTreeWalk(subNode->right);
+		OUTL(subNode->value << " ");
 	}
-	else
-		subNode = subNode->right;
-	}
-	return subNode->value;
 }
 
 template<typename T>
-T binSearch<T>::minimum(treeNode<T>* subNode){
+treeNode<T>* bsTree<T>::minimum(treeNode<T>* subNode){
 	while(subNode->left != nullptr){
 		subNode = subNode->left;
 	}
 	OUT ("minimum is "<< subNode->value);
-	return subNode->value;
+	return subNode;
 }
 
 template<typename T>
-T binSearch<T>::maximum(treeNode<T>* subNode){
+treeNode<T>* bsTree<T>::maximum(treeNode<T>* subNode){
 	while(subNode->right!=nullptr){
 		subNode = subNode->right;
 	}
 	OUT("maximum is " << subNode->value);
-	return subNode->value;
+	return subNode;
+}
+
+/*Search for a key: O(h)*/
+template<typename T>
+treeNode<T>* bsTree<T>::find(treeNode<T>* subNode, const T& elem)
+{
+	while(subNode != nullptr && elem != subNode->value)
+	{
+		if(elem < (subNode->value))
+		{
+			subNode = subNode->left;
+		}
+		else
+		{
+			subNode = subNode->right;
+		}
+	}
+	return subNode;
 }
 
 template<typename T>
-inline void binSearch<T>::insert(treeNode<T>* inNode){
-	y = nullptr;
+inline void bsTree<T>::insert(treeNode<T>* inNode){
+	temp = nullptr;
 	treeNode<T>* x = root;
 	while( x!= nullptr){
-		y = x;
+		temp = x;
 		if((inNode->value) < (x->value)){
 			x = x->left;
 		}
@@ -161,55 +179,77 @@ inline void binSearch<T>::insert(treeNode<T>* inNode){
 			x = x->right;
 		}
 	}
-	// inNode->value = y;
-	if(y == nullptr){
+	// inNode->value = temp;
+	if(temp == nullptr){
 		root = inNode; 					//Tree was empty
 	}
-	else if ((inNode->value) < (y->value)){
-		y->left = inNode;
+	else if ((inNode->value) < (temp->value)){
+		temp->left = inNode;
 	}
 	else{
-		y->right = inNode;
+		temp->right = inNode;
 	}
 	OUT("inserted " << inNode->value << " into tree");
 }
 
 template<typename T>
-void binSearch<T>::treeSuccessor(treeNode<T>* subNode){
-	if(subNode->right!=nullptr){
+treeNode<T>* bsTree<T>::treeSuccessor(treeNode<T>* subNode){
+	if(subNode->right!=nullptr){		
+		OUT("Successor is: " << (minimum(subNode->right))->value);
 		return minimum(subNode->right);
 	}
-	y = subNode;
+	temp = subNode;
+	while(temp!=nullptr && subNode == temp->right){
+		subNode = temp;
+	}
+	OUT("Successor: " << temp->value);
+	return temp;
+}
+
+template<typename T>
+void bsTree<T>::transplant(treeNode<T>* u, treeNode<T>* v)
+{
+	if(u == nullptr){
+		root = v;
+	}
+	else if(u==u->left){
+		u->left = v;
+	}
+	else{
+		u->right = v;
+	}
+	if(v!=nullptr){
+		v = u;
+	}
 }
 
 
 int main(void){
-	binSearch<int>* bSearch = new binSearch<int>;
+	bsTree<int>* bSearch = new bsTree<int>;
 	int elem;
-	for(;;){
-		treeNode<int>* tNode = new treeNode<int>;
-		OUT("Input keys to insert (type -6545 to break):");
-		std::cin>> elem; //tNode->value;
-		tNode->value = elem;
-		if(elem == -6545){
-			delete tNode;
+	treeNode<int>* tNode = new treeNode<int>;
+	while(true){
+		OUT("Input keys to insert (type \"-0\" to break):");
+		std::cin>> tNode->value;
+		if(tNode->value == -0){
 			break;
 		}
 		bSearch->insert(tNode);
-		// delete tNode;
+		tNode = tNode->reset(new treeNode<int>);
 	}
 
 	OUT("\ninorderTreeWalk");
-	bSearch->inorderTreeWalk(bSearch->root);
+	bSearch->inorderTreeWalk(bSearch->getRoot());
 	std::cout << std::endl;
 
-	OUT("\npostOrderTreeWalk");
-	bSearch->postOrderTreeWalk(bSearch->root);
-	std::cout << std::endl;
+	bSearch->minimum(bSearch->getRoot());
+	bSearch->maximum(bSearch->getRoot());
+	auto suc = bSearch->treeSuccessor(bSearch->getRoot());
+	OUT("Successor: " << suc);
 
-	OUT("\npreOrderTreeWalk");
-	bSearch->preOrderTreeWalk(bSearch->root);
-	std::cout << std::endl;
+	auto f = 6;
+	auto res = bSearch->find(bSearch->getRoot(), 6);
+	OUT("\nSearch for " << 6 << " returned " << res->value);
 
-	// bSearch->eraseAll();s
+	return EXIT_SUCCESS;
 }
