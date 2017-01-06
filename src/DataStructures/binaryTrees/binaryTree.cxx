@@ -226,8 +226,7 @@ void bsTree<T>::transplant(treeNode<T>* u, treeNode<T>* v)
 }
 
 template<typename T>
-void bsTree<T>::remove(treeNode<T>* z)
-{
+void bsTree<T>::remove(treeNode<T>* z){
 	if(z->left==nullptr){
 		transplant(z, z->right);
 	}
