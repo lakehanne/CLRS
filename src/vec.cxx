@@ -23,18 +23,18 @@ int main()
 	j = 0 ; //reset j to zero;
 
 	//try std iterator
-	std::vector<int>::iterator iter;
-	for(iter=vec.begin(); iter!=vec.end(); ++iter)
-		cout << "iter: " << ++j << ": " << *iter << "\n";
+	std::vector<int>::const_iterator citer;
+	for(citer=vec.cbegin(); citer!=vec.cend(); ++citer)
+		cout << "citer: " << ++j << ": " << *citer << "\n";
 
 
 
 
-	// // test for each
-	// std::for_each(vec.begin(), vec.end(), bind1st(operator<<, std::cout)
-	// {
-	// 	std::cout << "this is " << i << "\n";
-	// }
+	// test for each
+	std::for_each(vec.begin(), vec.end(), bind1st(operator<<, std::cout)
+	{
+		std::cout << "this is " << i << "\n";
+	}
 	
 	return 0;
 }
