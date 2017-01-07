@@ -73,7 +73,14 @@ public:
 
 	//delete all nodes one after the other
 	inline void eraseAll(){
-		if(root->left != nullptr){
+		while(root!=nullptr){
+			temp = root;
+			root = root->right;
+			delete temp;
+			root->right = root->left;
+			delete root->right;
+		}
+/*		if(root->left != nullptr){
 			delete root->left;
 		}
 		else if(root->right != nullptr){
@@ -82,172 +89,181 @@ public:
 		else if(root != nullptr){
 			delete root;
 		}
-		delete temp;
+		delete temp;*/
 	}
 
-	treeNode<T>* getRoot() const;
-	void inorderTreeWalk(treeNode<T>* subNode);
-	void preOrderTreeWalk(treeNode<T>* subNode);
-	void postOrderTreeWalk(treeNode<T>* subNode);
-	treeNode<T>* minimum(treeNode<T>* subNode);
-	treeNode<T>* maximum(treeNode<T>* subNode);
-	treeNode<T>* find(treeNode<T>* subNode, const T& elem);
-	void insert(treeNode<T>* inNode);
-	treeNode<T>* treeSuccessor(treeNode<T>* subNode);
-	void transplant(treeNode<T>* u, treeNode<T>* v);
-	void remove(treeNode<T>* z);
-};
-
-template<typename T>
-treeNode<T>* bsTree<T>::getRoot()	const
-{
-	return this->root;
-}
-template<typename T>
-void bsTree<T>::inorderTreeWalk(treeNode<T>* subNode)
-{
-	if(subNode != nullptr){
-		inorderTreeWalk(subNode->left);
-		OUTL(subNode->value << " ");
-		inorderTreeWalk(subNode->right);
-	}
-}
-
-template<typename T>
-void bsTree<T>::preOrderTreeWalk(treeNode<T>* subNode){
-	if(subNode != nullptr){
-		OUTL(subNode->value << " ");
-		preOrderTreeWalk(subNode->left);
-		preOrderTreeWalk(subNode->right);
-	}
-}
-
-template<typename T>
-void bsTree<T>::postOrderTreeWalk(treeNode<T>* subNode){
-	if(subNode != nullptr){
-		postOrderTreeWalk(subNode->left);
-		postOrderTreeWalk(subNode->right);
-		OUTL(subNode->value << " ");
-	}
-}
-
-template<typename T>
-treeNode<T>* bsTree<T>::minimum(treeNode<T>* subNode){
-	while(subNode->left != nullptr){
-		subNode = subNode->left;
-	}
-	OUT ("minimum is "<< subNode->value);
-	return subNode;
-}
-
-template<typename T>
-treeNode<T>* bsTree<T>::maximum(treeNode<T>* subNode){
-	while(subNode->right!=nullptr){
-		subNode = subNode->right;
-	}
-	OUT("maximum is " << subNode->value);
-	return subNode;
-}
-
-/*Search for a key: O(h)*/
-template<typename T>
-treeNode<T>* bsTree<T>::find(treeNode<T>* subNode, const T& elem)
-{
-	while(subNode != nullptr && elem != subNode->value)
+	treeNode<T>* getRoot() const
 	{
-		if(elem < (subNode->value))
-		{
+		return this->root;
+	}
+
+	/*Takes theta(n) time to walk an n-node binary tree*/
+	void inorderTreeWalk(treeNode<T>* subNode)
+	{
+		if(subNode != nullptr){
+			inorderTreeWalk(subNode->left);
+			OUTL(subNode->value << " ");
+			inorderTreeWalk(subNode->right);
+		}
+	}
+
+	void preOrderTreeWalk(treeNode<T>* subNode)
+	{
+		if(subNode != nullptr){
+			OUTL(subNode->value << " ");
+			preOrderTreeWalk(subNode->left);
+			preOrderTreeWalk(subNode->right);
+		}
+	}
+
+	void postOrderTreeWalk(treeNode<T>* subNode)
+	{
+		if(subNode != nullptr){
+			postOrderTreeWalk(subNode->left);
+			postOrderTreeWalk(subNode->right);
+			OUTL(subNode->value << " ");
+		}
+	}
+
+	treeNode<T>* minimum(treeNode<T>* subNode)
+	{
+		while(subNode->left != nullptr){
 			subNode = subNode->left;
+		}
+		OUT ("minimum is "<< subNode->value);
+		return subNode;
+	}
+
+	/*Worst Case: O(h)*/
+	treeNode<T>* maximum(treeNode<T>* subNode)
+	{
+		while(subNode->right != nullptr){
+			subNode = subNode->right;
+		}
+		OUT ("maximum is "<< subNode->value);
+		return subNode;
+	}
+
+	/*Search for a key: O(h)*/
+	treeNode<T>* iterativefind(treeNode<T>* subNode, const T& elem)
+	{
+		while(subNode != nullptr && elem != subNode->value)
+		{
+			if(elem < (subNode->value))
+			{
+				subNode = subNode->left;
+			}
+			else
+			{
+				subNode = subNode->right;
+			}
+		}
+		return subNode;
+	}
+
+	/*This takes O(h) time*/
+	treeNode<T>* find(treeNode<T>* subNode, const T& elem)
+	{
+		if((subNode==nullptr)|| (elem == subNode->value))
+		{
+			return subNode;
+		}
+		if(elem < subNode->value)
+		{
+			return find(subNode->left, elem);
+		}
+		else if(elem > subNode->value)
+		{ 
+			return find(subNode->right, elem);
 		}
 		else
 		{
-			subNode = subNode->right;
+			return nullptr;
 		}
 	}
-	return subNode;
-}
 
-/*O(h) time on a tree of height h*/
-template<typename T>
-inline void bsTree<T>::insert(treeNode<T>* inNode){
-	temp = nullptr;
-	treeNode<T>* x = root;
-	while( x!= nullptr){
-		temp = x;
-		if((inNode->value) < (x->value)){
-			x = x->left;
+	/*Search for a key: O(h)*/
+	void insert(treeNode<T>* inNode)
+	{
+		temp = nullptr;
+		treeNode<T>* x = root;
+		while( x!= nullptr){
+			temp = x;
+			if((inNode->value) < (x->value)){
+				x = x->left;
+			}
+			else{
+				x = x->right;
+			}
+		}
+		// inNode->value = temp;
+		if(temp == nullptr){
+			root = inNode; 					//Tree was empty
+		}
+		else if ((inNode->value) < (temp->value)){
+			temp->left = inNode;
 		}
 		else{
-			x = x->right;
+			temp->right = inNode;
+		}
+		OUT("inserted " << inNode->value << " into tree");
+	}
+
+	treeNode<T>* treeSuccessor(treeNode<T>* subNode)
+	{
+		if(subNode->right!=nullptr){		
+			OUT("Successor is: " << (minimum(subNode->right))->value);
+			return minimum(subNode->right);
+		}
+		temp = subNode;
+		while(temp!=nullptr && subNode == temp->right){
+			subNode = temp;
+		}
+		OUT("Successor: " << temp->value);
+		return temp;
+	}
+
+	void transplant(treeNode<T>* u, treeNode<T>* v)
+	{
+		if(u == nullptr){
+			root = v;
+		}
+		else if(u==u->left){
+			u->left = v;
+		}
+		else{
+			u->right = v;
+		}
+		if(v!=nullptr){
+			v = u;
 		}
 	}
-	// inNode->value = temp;
-	if(temp == nullptr){
-		root = inNode; 					//Tree was empty
-	}
-	else if ((inNode->value) < (temp->value)){
-		temp->left = inNode;
-	}
-	else{
-		temp->right = inNode;
-	}
-	OUT("inserted " << inNode->value << " into tree");
-}
 
-template<typename T>
-treeNode<T>* bsTree<T>::treeSuccessor(treeNode<T>* subNode){
-	if(subNode->right!=nullptr){		
-		OUT("Successor is: " << (minimum(subNode->right))->value);
-		return minimum(subNode->right);
+	void remove(treeNode<T>* z)
+	{
+		if(z->left==nullptr){
+			transplant(z, z->right);
+		}
+		else if(z->right==nullptr){
+			transplant(z, z->left);
+		}
+		else{
+			temp = treeSuccessor(z);
+			if(temp != z){
+				transplant(temp, temp->right);
+				temp->right = z->right;
+				temp->right = temp;
+			}
+			transplant(z, temp);
+			temp->left = z->left;
+			temp->left = temp;
+		}
+		OUT("removed: " << z->value);
 	}
-	temp = subNode;
-	while(temp!=nullptr && subNode == temp->right){
-		subNode = temp;
-	}
-	OUT("Successor: " << temp->value);
-	return temp;
-}
+};
 
-template<typename T>
-void bsTree<T>::transplant(treeNode<T>* u, treeNode<T>* v)
+int main(void)
 {
-	if(u == nullptr){
-		root = v;
-	}
-	else if(u==u->left){
-		u->left = v;
-	}
-	else{
-		u->right = v;
-	}
-	if(v!=nullptr){
-		v = u;
-	}
-}
-
-template<typename T>
-void bsTree<T>::remove(treeNode<T>* z){
-	if(z->left==nullptr){
-		transplant(z, z->right);
-	}
-	else if(z->right==nullptr){
-		transplant(z, z->left);
-	}
-	else{
-		temp = treeSuccessor(z);
-		if(temp != z){
-			transplant(temp, temp->right);
-			temp->right = z->right;
-			temp->right = temp;
-		}
-		transplant(z, temp);
-		temp->left = z->left;
-		temp->left = temp;
-	}
-	OUT("removed: " << z->value);
-}
-
-int main(void){
 	bsTree<int>* bSearch = new bsTree<int>;
 	int elem;
 	treeNode<int>* tNode = new treeNode<int>;
@@ -271,7 +287,9 @@ int main(void){
 
 	auto f = 6;
 	auto res = bSearch->find(bSearch->getRoot(), 6);
-	OUT("\nSearch for " << 6 << " returned " << res->value);
+	if(res!=nullptr){
+		OUT("\nSearch for " << 6 << " returned " << res->value);
+	}
 
 	/*test remove*/
 	treeNode<int>* tempNode = new treeNode<int>;
@@ -291,6 +309,7 @@ int main(void){
 	bSearch->inorderTreeWalk(bSearch->getRoot());
 
 	delete tempNode;
+	delete tNode;
 
 	return EXIT_SUCCESS;
 }

@@ -17,6 +17,7 @@
 * 
 */
 
+#include <string>
 #include <cassert>
 #include <iostream>
 #include <algorithm>
@@ -35,70 +36,42 @@ private:
 	int currentPos;					//position of current element
 	T*	listArray;					//array holding list elements
 
-	void clear()
-	{
+	void clear(){
 		delete [] listArray;
 		currentSize = currentPos = 0;
 		listArray = new  T[sizeLimit];
+	}
+
+	int size() const{
+		return currentSize;
 	}
 
 	/*resize should cost O(2n) due to the doubling*/
 	inline void resize(){
 		sizeLimit *= 2;
 		T* tempListArray = new T[sizeLimit];		//allocate new memory
-		// std::copy(listArray, listArray+sizeLimit, tempListArray);	//copy all contents to temp listArray
-		for(int i=0; i <= currentSize; ++i){
-			tempListArray[i] = listArray[i];
-		}
+		/*copy all contents to temp listArray*/
+		std::copy(listArray, listArray+sizeLimit, tempListArray);	
 
 		delete [] listArray;							//reset previous elements	
 		listArray = new T[sizeLimit];					//allocate new array listArray
-		for(int i=0; i <= currentSize; ++i){
-			listArray[i] = tempListArray[i];
-		}
-		
+		std::copy(tempListArray, tempListArray+sizeLimit, listArray);	//transfer elements to listArray
+
 		delete [] tempListArray;				//delete newly allocated array memory
-		OUT("array size now: " << sizeLimit << "| current Size: " << currentSize);
+		OUT("array size reset: " << sizeLimit << "| current Size: " << currentSize);
 
 		OUT("listArray elems: ")
 		for(auto i = 0; i < currentSize; ++i){
 			OUTL(listArray[i] << " ");
 		}
 	}
-protected:
-	/*these functions are not used in the program*/
-	inline void begin()
-	{
-		currentPos = 0;
-	}
-
-	inline void end()
-	{
-		currentPos = currentSize;
-	}
-
-	inline void prev()	{
-		if(currentPos !=0 )
-		{
-			--currentPos;
-		}
-	}
-
-	inline void next()	{
-		// if(currentPos != currentSize )
-			++currentPos;
-	}
-
-	const T& getCurElem() const
-	{
-		return listArray[currentPos];
-	}
 
 public:
+	/*Constructor*/
 	arrayList(int defaultSize=5) 
 	: sizeLimit(defaultSize), currentPos(0), currentSize(0), listArray(new T[sizeLimit])
 	{	}
-	//destructor
+	/*destructor*/
 	~arrayList()
 	{ 
 		delete [] listArray;
@@ -109,24 +82,23 @@ public:
 
 	void insert(const T& elem){
 		/*We'll copy all the elements of the old array into a new array and insert*/
-		if(!isFull())	{
-				OUT("currentPos: " << currentPos << " | currentSize: " << currentSize << " | sizeLimit: " << sizeLimit);
-				for(int i = currentSize; i > currentPos  ; --i)
-				{
-					listArray[i] = listArray[i-1];    //shift elements up to make room
-					OUT("listArray[i]: " << listArray[i]);
-				}
-			listArray[currentPos] = elem;
-			++currentSize;
-			++currentPos;
-			OUT("inserted: " << elem << " into array");
+		if(isFull()){	resize();	}
+		/*shift elements up to make room*/
+		for(int i = currentSize; i > currentPos  ; --i)
+		{
+			listArray[i] = listArray[i-1];    
+			OUT("listArray[i]: " << listArray[i]);
 		}
+		listArray[currentPos] = elem;
+		++currentSize;
+		++currentPos;
+		OUT("inserted: " << elem << " into array");
+		OUT("currentPos: " << currentPos << " | currentSize: " << currentSize << " | sizeLimit: " << sizeLimit);
 	}
 
 	bool isFull(){
 		if (currentSize == sizeLimit)
 		{
-			resize();
 			return true;
 		}
 		else{
@@ -141,14 +113,28 @@ public:
 
 	T remove()
 	{
-		assert(currentPos >= 0 && currentPos < currentSize);
+		assert(currentPos >= 0 && currentPos <= currentSize);
 		T elem = listArray[currentPos]; 	//copy the element
-		for (auto i = currentPos; i < currentSize-1; ++i)
+		for (auto i = currentPos; i < currentSize; ++i)
 		{
 			listArray[i] = listArray[i+1];
 		}
 		--currentSize;
 		return elem;
+		OUT("removed: " << elem);
+	}
+
+	T find(const T& elem){
+		for(auto i = 0; i < currentSize; ++i)
+		{
+			if(elem == listArray[i])
+			{
+				OUT("Found " << elem);
+				return listArray[i];
+			}
+		}
+		OUT("element not in list");
+		return 0;
 	}
 
 	void print() const{
@@ -156,18 +142,6 @@ public:
 		for(auto i = 0; i < currentSize; ++i){
 			OUT(listArray[i] << " ");
 		}
-	}
-
-	int size() const
-	{
-		return currentSize;
-	}
-
-	void setPos(int pos)
-	{
-		if(currentPos > currentSize)
-			resize();
-		currentPos = pos;
 	}
 };
 
@@ -187,7 +161,12 @@ int main(void)
 		arrayObj.insert(num);
 	}
 
-	// arrayObj.setPos(20);
+	OUT("enter an item to find");
+	std::cin>>num;
+	arrayObj.find(num);
+
+	arrayObj.append(20);
+	// arrayObj.remove();
 	arrayObj.print();
 
 

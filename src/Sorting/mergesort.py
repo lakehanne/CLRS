@@ -27,51 +27,39 @@ def merge(A, p, q, r):
 	n1 = q - p +1
 	n2 = r - q
 	#initialize the left and right subarrays
-	L = np.zeros([n1 + 1])
-	R = np.zeros([n2 + 1])
-	for i in range (0, n1):
-		L[i] = A[p+i-1]
-	for j in range (0, n2):
-		R[j] = A[q+j]
-	# //allocate sentinels
-	R[n2] = np.inf
-	L[n1] = np.inf
-	i, j = 0,0
+	L = A[p:q+1]
+	R = A[q+1:r+1]
+	i = j = 0
+	print 'L: ', L, 'R: ', R
 	for k in range(p, r):
-		if L[i] < R[j]:
+		if L[i] <= R[j]:
 			A[k] = L[i]
-			i = i +1
+			i += 1
 		else:
 			A[k] = R[j]
-			j = j+1
+			j += 1
 
 def mergesort(A, p, r):
-	q = int((p+r)/2)
-	mergesort(A, p, q)
-	mergesort(A, q + 1, r)
-	merge(A, p, q, r)
+	if p < r:
+		q = (p+r)/2
+		mergesort(A, p, q)
+		mergesort(A, q + 1, r)
+		merge(A, p, q, r)
 
 #test
-n = 3
+n = 5
 A = np.random.randint(1, 10, size=n)
 print 'input array: ', A
-p, r = 0, len(A)-1
+p, r = 0, len(A)
 # print p, r
 mergesort(A, p, r)
 print 'output array: ', A
-
-#test with strings and chars
-B = np.random.bytes(n)
-print 'input array of bytes: ', B
-p, r = 0, len(B)-1
-mergesort(B, p, r)
-print 'output array of bytes: ', B
  
 #test with negative arrays ints
 A = np.random.randint(1, 10, size=n)
 A *= -1
 print 'input -ve array: ', A
-p, r = 0, len(A)-1
+p, r = 0, len(A)
 mergesort(A, p, r)
 print 'output -ve array: ', A
 

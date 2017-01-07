@@ -19,37 +19,36 @@
 
 #include <iostream>
 #include <array>
+#include <cmath>
 #include <limits>
 
 using namespace std;
 
 template<typename T>
-void merge(T* A, T start, T mid, T end)
+T* merge(T A[], T start, T mid, T end)
 {
-	auto n1 = mid-start+1;
-	auto n2 = end-mid;
+	T n1 = mid-start+1;
+	T n2 = end-mid;
 	//initialize the two sub-arrays
 	T L[n1+1] = {};
 	T R[n2+1] = {};
-	// cout << "n1: " << n1 << "\tn2: " << n2 << endl;
-	cout << "L[i]: " << "\t";
-	for(auto i = 0; i < n1; ++i)
+
+	for(T i = 0; i < n1; ++i)
 	{
 		L[i] = A[start+i-1];
-		cout << L[i] << " ";
 	}
-	std::cout << "\n";
-	for(auto j = 0; j < n2; ++j)
+	
+	for(T j = 0; j < n2; ++j)
 	{
 		R[j] = A[mid+j];
 	}
 	//allocate sentinels
 	L[n1+1] = std::numeric_limits<T>::max();
 	R[n1+1] = std::numeric_limits<T>::max();
-	auto i = 1; 
-	auto j = 1;
-	for(auto k = start; j < end; ++k){
-		if(L[i] < R[i]){
+	T i = 1; 
+	T j = 1;
+	for(T k = start; j < end; ++k){
+		if(L[i] <= R[i]){
 			A[k] = L[i];
 			i = i+1;
 		}
@@ -57,45 +56,46 @@ void merge(T* A, T start, T mid, T end)
 			A[k] = R[j];
 			j = j + 1;
 		}
-		cout << A[k] << " ";
 	}
-	std::cout << "\n";
-
+	return A;
 }
 
 template<typename T>
-void mergesort(T A[], T start, T end){
-	if(start < end){
-	//mid is the midpoint between start and end
-	int mid = static_cast<int>(floor((start + end)/2));
-	// cout << "mid: " << mid << endl;
-	mergesort(A, start, mid);
-	mergesort(A, mid+1, end);
-	merge(A, start, mid, end);		
+T* mergesort(T A[], T start, T end)
+{	
+	T *B;
+	if(start < end)
+	{
+		//mid is the midpoint between start and end
+		int mid = floor((start + end)/2);
+		// cout << "mid: " << mid << endl;
+		mergesort(A, start, mid);
+		mergesort(A, mid+1, end);
+		B = merge(A, start, mid, end);		
 	}
+	return B;
 }
 
 int main(int argc, char** argv){
-	if(argc<2){
-		std::cerr<< "you need to enter the array elements" << "\n";
+	int num;
+	int n = 5;
+	int A[n] = {};
+	std::cout << "please enter the array elemets one after the other" << std::endl;
+	for(int i = 0; i < n; ++i){
+		std::cin>>A[i];
 	}
-
-	// std::cout << "Enter the elements of the array followed by RETURN key" << "\n" ;
-	int A[10] = {};
-	A[0] = atoi(argv[1]);
 
 	std::cout << "\n\nYou have entered the array: " << std::endl;
-	for(auto i = 0; i < 10; ++i)
+	for(int i = 0; i < n; ++i)
 	{		
-		A[i] = atoi(argv[i+1]);
 		cout << A[i] << " ";
 	}
-	cout << "\n";
 	
-	mergesort(A, 0, 9);
-
+	int* B = mergesort(A, 0, n-1);
 	std::cout << "\n\nsorted array is " << std::endl;
-	for(auto i = 0; i < 10; ++i){
-		std::cout << A[i] << " " ;		
+	// std::cout << B << std::endl;
+	for(int i = 0; i < n; ++i)
+	{
+		std::cout << B[i] << " " ;		
 	}
 }
