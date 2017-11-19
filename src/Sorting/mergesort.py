@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-/*  
+/*
 *  Copyright December 2016
 *  Author: Olalekan P. Ogunmolu
 *
@@ -13,53 +13,54 @@
 * Unless required by applicable law or agreed to in writing, software
 * distributed under the License is distributed on an "AS IS" BASIS,
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* 
+*
 * See the License for the specific language governing permissions and
 * limitations under the License.
-* 
+*
 */
 """
 
 import numpy as np
 import sys
 
-def merge(A, p, q, r):
-	n1 = q - p +1
-	n2 = r - q
-	#initialize the left and right subarrays
-	L = A[p:q+1]
-	R = A[q+1:r+1]
-	i = j = 0
-	print 'L: ', L, 'R: ', R
-	for k in range(p, r):
-		if L[i] <= R[j]:
-			A[k] = L[i]
-			i += 1
-		else:
-			A[k] = R[j]
-			j += 1
+def merge(items, p, q, r):
+    L = items[p:q+1]
+    R = items[q+1:r+1]
+    i = j = 0
+    k = p
+    while i < len(L) and j < len(R):
+        if(L[i] < R[j]):
+            items[k] = L[i]
+            i += 1
+        else:
+            items[k] = R[j]
+            j += 1
+        k += 1
+    if(j == len(R)):
+        items[k:r+1] = L[i:]
 
-def mergesort(A, p, r):
-	if p < r:
-		q = (p+r)/2
-		mergesort(A, p, q)
-		mergesort(A, q + 1, r)
-		merge(A, p, q, r)
+
+
+def mergesort(items, p, r):
+    if(p < r):
+        q = (p+r)/2
+        mergesort(items, p, q)
+        mergesort(items, q+1, r)
+        merge(items, p, q, r)
+
 
 #test
-n = 5
-A = np.random.randint(1, 10, size=n)
+A = np.random.randint(1, 10, size=5)
 print 'input array: ', A
-p, r = 0, len(A)
-# print p, r
+p, r = 0, len(A)-1
 mergesort(A, p, r)
 print 'output array: ', A
- 
+
 #test with negative arrays ints
-A = np.random.randint(1, 10, size=n)
+A = np.random.randint(1, 10, size=5)
 A *= -1
-print 'input -ve array: ', A
-p, r = 0, len(A)
+print '\ninput -ve array: ', A
+p, r = 0, len(A)-1
 mergesort(A, p, r)
 print 'output -ve array: ', A
 
